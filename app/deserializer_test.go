@@ -2,12 +2,22 @@ package app
 
 import (
 	"encoding/xml"
+	"errors"
 	"io/ioutil"
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func (book *GnuCashBook) findRootAccount() (*GnuCashAccount, error) {
+	for _, account := range book.Accounts {
+		if account.Type == "ROOT" {
+			return &account, nil
+		}
+	}
+	return &GnuCashAccount{}, errors.New("Root account not found")
+}
 
 func deserialize(t *testing.T, file string) *Root {
 	xmlFile, err := os.Open("../xml-samples/" + file)

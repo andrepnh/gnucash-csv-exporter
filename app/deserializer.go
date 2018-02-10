@@ -2,7 +2,6 @@ package app
 
 import (
 	"encoding/xml"
-	"errors"
 )
 
 // Root - GnuCash xml root element
@@ -39,13 +38,4 @@ type GnuCashSplit struct {
 	Id      string `xml:"id"` // nolint: golint
 	Value   string `xml:"value"`
 	Account string `xml:"account"`
-}
-
-func (book *GnuCashBook) findRootAccount() (*GnuCashAccount, error) {
-	for _, account := range book.Accounts {
-		if account.Type == "ROOT" {
-			return &account, nil
-		}
-	}
-	return &GnuCashAccount{}, errors.New("Root account not found")
 }
