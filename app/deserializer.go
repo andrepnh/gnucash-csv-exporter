@@ -25,17 +25,12 @@ type GnuCashAccount struct {
 	Parent string `xml:"parent"`
 }
 
-// Date - wraps a date string
-type Date struct {
-	Data string `xml:"date"`
-}
-
 // GnuCashTransaction - subset of GnuCash xml transaction element
 type GnuCashTransaction struct {
 	Id          string         `xml:"id"` // nolint: golint
 	Description string         `xml:"description"`
-	DatePosted  Date           `xml:"date-posted"`
-	DateEntered Date           `xml:"date-entered"`
+	DatePosted  string         `xml:"date-posted>date"`
+	DateEntered string         `xml:"date-entered>date"`
 	Splits      []GnuCashSplit `xml:"splits>split"`
 }
 

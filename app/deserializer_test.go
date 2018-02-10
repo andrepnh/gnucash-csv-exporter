@@ -72,8 +72,8 @@ func TestTransactionDeserialization(t *testing.T) {
 	root := deserialize(t, "simple-uncompressed.xml")
 	for _, tx := range root.Book.Transactions {
 		if tx.Id == "c5d90c78d80428aacfe63f8c3dcb46a0" {
-			assert.Equal("2017-01-19 00:00:00 -0200", tx.DatePosted.Data)
-			assert.Equal("2018-01-20 16:44:08 -0200", tx.DateEntered.Data)
+			assert.Equal("2017-01-19 00:00:00 -0200", tx.DatePosted)
+			assert.Equal("2018-01-20 16:44:08 -0200", tx.DateEntered)
 			assert.Equal("Salário", tx.Description)
 			assert.Equal(2, len(tx.Splits))
 
