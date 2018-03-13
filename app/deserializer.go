@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/xml"
+	"io"
 )
 
 // Root - GnuCash xml root element
@@ -38,4 +39,14 @@ type GnuCashSplit struct {
 	Id      string `xml:"id"` // nolint: golint
 	Value   string `xml:"value"`
 	Account string `xml:"account"`
+}
+
+func Deserialize(reader io.Reader) *Root { // nolint: golint
+	var root Root
+	decoder := xml.NewDecoder(reader)
+	err := decoder.Decode(&root)
+	if err != nil {
+		panic(err)
+	}
+	return &root
 }

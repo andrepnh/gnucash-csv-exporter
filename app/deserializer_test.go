@@ -1,9 +1,8 @@
 package app
 
 import (
-	"encoding/xml"
+	"bufio"
 	"errors"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -22,16 +21,9 @@ func (book *GnuCashBook) findRootAccount() (*GnuCashAccount, error) {
 func deserialize(t *testing.T, file string) *Root {
 	xmlFile, err := os.Open("../xml-samples/" + file)
 	if assert.NoError(t, err, "Could not open file") {
-		defer xmlFile.Close()
-		bytes, err := ioutil.ReadAll(xmlFile)
-		if assert.NoError(t, err) {
-			var root Root
-			xml.Unmarshal(bytes, &root)
-			return &root
-		}
+		return Deserialize(bufio.NewReader(xmlFile))
 	}
-	t.FailNow()
-	return &Root{}
+	panic(err)
 }
 
 func TestAccountAmount(t *testing.T) {
