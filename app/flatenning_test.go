@@ -24,16 +24,6 @@ func newTransaction(description string, account1 uuid.UUID, value1 int64, accoun
 	}
 }
 
-/*
-func groupAccountsById(accounts []Account) map[string]Account {
-	grouped := make(map[string]Account)
-	for _, acc := range accounts {
-		grouped[acc.Id.String()] = acc
-	}
-	return grouped
-}
-*/
-
 func TestShouldFlattenAccountsIntoTransactions(t *testing.T) {
 	accounts := []Account{
 		Account{

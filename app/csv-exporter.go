@@ -17,7 +17,7 @@ func dashlessUUID(id uuid.UUID) string {
 	return strings.Replace(id.String(), "-", "", -1)
 }
 
-func export(writer *csv.Writer, tx *FlattenedTransaction) {
+func exportTx(writer *csv.Writer, tx *FlattenedTransaction) {
 	err := writer.Write([]string{
 		tx.Date.Format(CsvDateFormat),
 		tx.Description,
@@ -37,8 +37,23 @@ func export(writer *csv.Writer, tx *FlattenedTransaction) {
 	}
 }
 
-// Export - writes flattened transactions to a csv file
-func Export(txs []FlattenedTransaction, fileName string) {
+func exportBalance(writer *csv.Writer, balance *AccountBalance) {
+	err := writer.Write([]string{
+		balance.Name,
+		balance.Date.Format(CsvDateFormat),
+		balance.Balance.FloatString(2),
+		dashlessUUID(balance.Transaction),
+		balance.Type,
+		dashlessUUID(balance.Id),
+		dashlessUUID(balance.Parent),
+	})
+	if err != nil {
+		panic(err)
+	}
+}
+
+// ExportTransactions - writes flattened transactions to a csv file
+func ExportTransactions(txs []FlattenedTransaction, fileName string) {
 	file, err := os.Create(fileName)
 	if err != nil {
 		panic(err)
@@ -59,6 +74,30 @@ func Export(txs []FlattenedTransaction, fileName string) {
 		panic(err)
 	}
 	for _, tx := range txs {
-		export(writer, &tx)
+		exportTx(writer, &tx)
+	}
+}
+
+// ExportBalances - writes account balances to a csv file
+func ExportBalances(balances []AccountBalance, fileName string) {
+	file, err := os.Create(fileName)
+	if err != nil {
+		panic(err)
+	}
+	defer func() {
+		err2 := file.Close()
+		if err2 != nil {
+			panic(err2)
+		}
+	}()
+	writer := csv.NewWriter(bufio.NewWriter(file))
+	defer writer.Flush()
+	err = writer.Write([]string{
+		"Name", "Date", "Balance", "Transaction", "Type", "Id", "Parent"})
+	if err != nil {
+		panic(err)
+	}
+	for _, balance := range balances {
+		exportBalance(writer, &balance)
 	}
 }

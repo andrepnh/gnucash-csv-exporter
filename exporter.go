@@ -8,7 +8,7 @@ import (
 	"github.com/andrepnh/gnucash-es-exporter/app"
 )
 
-func toCsv(gnucashFile, csvFile string) {
+func toCsv(gnucashFile, outdir string) {
 	gcFile, err := os.Open(gnucashFile)
 	if err != nil {
 		panic(err)
@@ -22,17 +22,20 @@ func toCsv(gnucashFile, csvFile string) {
 	log.Println(len(book.Transactions), "transactions successfully converted")
 	flattened := app.Flatten(&book)
 	log.Println("Merged all accounts into transactions, exporting...")
-	app.Export(flattened, csvFile)
+	app.ExportTransactions(flattened, outdir+"/transactions.csv")
+	balances := app.CalcAccountBalances(&book)
+	log.Println("Calculated account balances, exporting...")
+	app.ExportBalances(balances, outdir+"/accounts.csv")
 	log.Println("Done.")
 }
 
 func main() {
-	gnucashFile := flag.String("i", "", "Input .gnucash file")
-	csvFile := flag.String("o", "transactions.csv", "Output csv file")
+	gnucashFile := flag.String("in", "", "Input .gnucash file")
+	outdir := flag.String("outdir", ".", "Path to write output csvs")
 	flag.Parse()
 	if *gnucashFile == "" {
 		panic("Input file is mandatory")
 	}
 
-	toCsv(*gnucashFile, *csvFile)
+	toCsv(*gnucashFile, *outdir)
 }
